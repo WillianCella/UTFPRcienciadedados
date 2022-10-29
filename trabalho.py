@@ -34,19 +34,3 @@ candidatos = candidatos['NM_VOTAVEL']
 frame = pd.DataFrame(list(candidatos.items()),columns = ['Número votável', 'Nome candidato'])
 st.dataframe(frame)
 
-# # Cria um dicionário com o código do cargo e a descrição do cargo
-# cargos = votacao_2022[['CD_CARGO', 'DS_CARGO']].set_index('CD_CARGO').to_dict()
-# cargos = cargos['DS_CARGO']
-# cargos
-
-# ### Estados 
-# estados = data_detran['uf'].unique()
-# estado = st.selectbox("Estados", estados)
-# base_estados = data_detran[data_detran['uf'] == estado] 
-
-# municipios = base_estados['municipio'].unique()
-# municipio = st.multiselect("Estados", municipios)
-# base_municipio = base_estados[base_estados['municipio'].isin(municipio)]
-
-# result = pd.crosstab(base_municipio['municipio'], base_municipio['br'])
-

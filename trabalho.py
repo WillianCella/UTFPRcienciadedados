@@ -1,9 +1,13 @@
-import imp
+import numpy as np
 import streamlit as st
 import pandas as pd
+import geopy as geocode
+geolocator = geocode.Nominatim(user_agent="nildo_agent")
 
-
-votacao_2022 =  pd.read_csv("./data/votacao_secao_2022_PR.csv",sep=";", encoding='latin1' )
+@st.cache
+def load_data():
+    data = pd.read_csv("./data/votacao_secao_2022_PR.csv", sep=";", encoding='latin1' )
+    return data
 
 st.title("Super trabalho eleitoral")
 
@@ -11,6 +15,13 @@ st.write("""
 # Base das eleições presidenciais 2022
 """
 )
+
+data_load_state = st.text('Carregando dados . . .')
+
+votacao_2022 = load_data()
+
+data_load_state.text('Dados Carregados com sucesso')
+
 
 # Define um DF com os votos por Estados
 estados = votacao_2022['SG_UF'].unique()
@@ -45,8 +56,19 @@ municipios = sorted(votos_UF['NM_MUNICIPIO'].unique())
 municipio = st.selectbox('Selecione um município', municipios)
 votos_municipio = votos_UF[votos_UF['NM_MUNICIPIO'] == municipio]
 
-st.write(f'O município "{municipio}" gerou {len(votos_municipio)} votos')
+st.caption(f'O município "{municipio}" gerou {len(votos_municipio)} votos')
 
 # Apresenta a quantidade de votos que o candidato conseguiu no município
 votos_candidato_municipio = votos_municipio[votos_municipio['NR_VOTAVEL'] == cod_candidato]
-st.write(f'O candidato "{candidato} - {cod_candidato}" conseguiu {len(votos_candidato_municipio)} em {municipio}')
+
+st.caption(f'O candidato "{candidato} - {cod_candidato}" conseguiu {len(votos_candidato_municipio)} em {municipio}')
+
+st.subheader('Mapa de votos para o Municipio', municipio)
+
+location = geolocator.geocode(f"{municipio}, PR")
+
+df = pd.DataFrame(
+    [np.array([location.latitude, location.longitude])],
+    columns=['lat', 'lon'])
+
+st.map(df)
